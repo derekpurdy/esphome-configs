@@ -1,3 +1,6 @@
+---
+# code: language=ESPHome
+
 substitutions:
   devicename: powermon-livingroomtv
   friendly_devicename: Living Room TV Power Monitor
