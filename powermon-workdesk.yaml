@@ -1,3 +1,6 @@
+---
+# code: language=ESPHome
+
 substitutions:
   devicename: powermon-workdesk
   friendly_devicename: Work Desk Power Monitor
