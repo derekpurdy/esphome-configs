@@ -2,8 +2,10 @@
 # code: language=ESPHome
 
 substitutions:
-  devicename: powermon-watersoftener
-  friendly_devicename: Water Softener Power Monitor
+  devicename: powermon-sump
+  friendly_devicename: Sump Pump Power Monitor
+  mqtt_server: mqtt.lan
+  mqtt_user: esphome
 
 esphome:
   name: $devicename
@@ -39,8 +41,8 @@ web_server:
 
 # Enable MQTT
 mqtt:
-  broker: mqtt.lan
-  username: !secret mqtt_user
+  broker: $mqtt_server
+  username: $mqtt_user
   password: !secret mqtt_password
   birth_message:
     topic: $devicename/status
@@ -54,41 +56,71 @@ time:
   - platform: homeassistant
     id: homeassistant_time
     timezone: America/Toronto
+    on_time:
+      # Every night reset counter to 0
+      - seconds: 0
+        minutes: 0
+        hours: 0
+        then:
+          - number.set:
+              id: counter
+              value: 0
 
 # Device Specific Config
 uart:
   rx_pin: RX
   baud_rate: 4800
 
+number:
+  - platform: template
+    name: "${friendly_devicename}: Daily Run Count"
+    optimistic: True
+    min_value: 0
+    max_value: 200
+    initial_value: 0
+    restore_value: True
+    update_interval: 60s
+    mode: box
+    step: 1
+    id: counter
+
 binary_sensor:
   - platform: gpio
+    name: "${friendly_devicename}: ESP Button"
     pin:
       number: GPIO0
       mode: INPUT_PULLUP
       inverted: True
-    name: "${friendly_devicename}: ESP Button"
     on_press:
       - switch.toggle: relay
   - platform: status
     name: "${friendly_devicename}: ESP Device"
   - platform: template
-    name: "${friendly_devicename}: Status"
+    name: "${friendly_devicename}: Pump Running"
     device_class: running
+    id: running
+    publish_initial_state: True
     lambda: |-
       if (id(current).state > 0) {
-        // Water Softener is on.
+        // Sump Pump is on.
         return true;
       } else {
-        // Water Softener is off.
+        // Sump Pump is off.
         return false;
       }
+    on_state:
+      if:
+        condition:
+          binary_sensor.is_on: running
+        then:
+          - number.increment: counter
 
 sensor:
   - platform: wifi_signal
     name: "${friendly_devicename}: WiFi Signal"
     update_interval: 60s
   - platform: cse7766
-    update_interval: 30s
+    update_interval: 5s
     current:
       name: "${friendly_devicename}: Current"
       accuracy_decimals: 1

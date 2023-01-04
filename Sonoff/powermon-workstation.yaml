@@ -2,8 +2,10 @@
 # code: language=ESPHome
 
 substitutions:
-  devicename: powermon-serverrack
-  friendly_devicename: Server Rack Power Monitor
+  devicename: powermon-workstation
+  friendly_devicename: Workstation Power Monitor
+  mqtt_server: mqtt.lan
+  mqtt_user: esphome
 
 esphome:
   name: $devicename
@@ -39,8 +41,8 @@ web_server:
 
 # Enable MQTT
 mqtt:
-  broker: mqtt.lan
-  username: !secret mqtt_user
+  broker: $mqtt_server
+  username: $mqtt_user
   password: !secret mqtt_password
   birth_message:
     topic: $devicename/status
@@ -62,11 +64,11 @@ uart:
 
 binary_sensor:
   - platform: gpio
-    name: "${friendly_devicename}: ESP Button"
     pin:
       number: GPIO0
       mode: INPUT_PULLUP
       inverted: True
+    name: "${friendly_devicename}: ESP Button"
     on_press:
       - switch.toggle: relay
   - platform: status

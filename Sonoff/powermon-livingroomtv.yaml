@@ -2,8 +2,10 @@
 # code: language=ESPHome
 
 substitutions:
-  devicename: powermon-workdesk
-  friendly_devicename: Work Desk Power Monitor
+  devicename: powermon-livingroomtv
+  friendly_devicename: Living Room TV Power Monitor
+  mqtt_server: mqtt.lan
+  mqtt_user: esphome
 
 esphome:
   name: $devicename
@@ -39,8 +41,8 @@ web_server:
 
 # Enable MQTT
 mqtt:
-  broker: mqtt.lan
-  username: !secret mqtt_user
+  broker: $mqtt_server
+  username: $mqtt_user
   password: !secret mqtt_password
   birth_message:
     topic: $devicename/status
