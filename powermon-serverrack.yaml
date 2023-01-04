@@ -1,3 +1,6 @@
+---
+# code: language=ESPHome
+
 substitutions:
   devicename: powermon-serverrack
   friendly_devicename: Server Rack Power Monitor
