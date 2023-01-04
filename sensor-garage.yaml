@@ -1,0 +1,76 @@
+substitutions:
+  devicename: sensor-garage
+  friendly_devicename: Garage Sensor
+
+esphome:
+  name: $devicename
+  platform: ESP8266
+  board: nodemcuv2
+  esp8266_restore_from_flash: yes
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  domain: ".lan"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "${friendly_devicename}"
+    password: !secret ap_password
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API & OTA Updates
+api:
+  password: !secret api_password
+ota:
+  password: !secret ota_password
+
+# Enable Web Server.
+web_server:
+  port: 80
+
+# Enable MQTT
+mqtt:
+  broker: mqtt.lan
+  username: !secret mqtt_user
+  password: !secret mqtt_password
+  birth_message:
+    topic: $devicename/status
+    payload: online
+  will_message:
+    topic: $devicename/status
+    payload: offline
+
+# Ensure Time Sync with Home Assistant
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+    timezone: America/Toronto
+
+# Device sensor configuration
+sensor:
+  - platform: dht
+    pin: D2
+    temperature:
+      name: "${friendly_devicename}: Temperature"
+      device_class: "temperature"
+      state_class: "measurement"
+      unit_of_measurement: "°C"
+    humidity:
+      name: "${friendly_devicename}: Humidity"
+      device_class: "humidity"
+      state_class: "measurement"
+    update_interval: 60s
+  - platform: wifi_signal
+    name: "${friendly_devicename}: WiFi Signal"
+    update_interval: 60s
+
+button:
+  - platform: restart
+    name: "${friendly_devicename}: Restart"
+    icon: "mdi:restart"
+    device_class: "restart"
