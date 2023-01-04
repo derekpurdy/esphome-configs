@@ -1,3 +1,6 @@
+---
+# code: language=ESPHome
+
 substitutions:
   devicename: sensor-garage
   friendly_devicename: Garage Sensor

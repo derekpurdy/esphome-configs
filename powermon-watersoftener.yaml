@@ -1,3 +1,6 @@
+---
+# code: language=ESPHome
+
 substitutions:
   devicename: powermon-watersoftener
   friendly_devicename: Water Softener Power Monitor

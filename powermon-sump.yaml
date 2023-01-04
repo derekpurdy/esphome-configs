@@ -1,3 +1,6 @@
+---
+# code: language=ESPHome
+
 substitutions:
   devicename: powermon-sump
   friendly_devicename: Sump Pump Power Monitor
